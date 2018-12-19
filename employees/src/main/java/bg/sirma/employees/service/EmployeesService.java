@@ -1,9 +1,6 @@
 package bg.sirma.employees.service;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,11 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 import bg.sirma.employees.model.Employee;
 import bg.sirma.employees.model.Project;
 import bg.sirma.employees.model.Team;
+import bg.sirma.employees.utils.DateUtils;
 
 @Service
 public class EmployeesService {
 
-	public Team getMostWorkTogether(MultipartFile file) throws IOException, ParseException {
+	public Team getMostWorkTogether(MultipartFile file) throws IOException {
 		final String fileContent = new String(file.getBytes());
 		final String[] employeesInfoRaw = fileContent.split("\r\n");
 		final Map<Integer, List<Employee>> project2employees = mapByProjectID(employeesInfoRaw);
@@ -30,21 +28,20 @@ public class EmployeesService {
 		return sortedTeams.first();
 	}
 
-	private Map<Integer, List<Employee>> mapByProjectID(final String[] employeesInfoRaw) throws ParseException {
+	private Map<Integer, List<Employee>> mapByProjectID(final String[] employeesInfoRaw) {
 		final Map<Integer, List<Employee>> project2employees = new HashMap<>();
-		final DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		for (final String employeeInfoRaw : employeesInfoRaw) {
-			final String[] employeeInfoSplited = employeeInfoRaw.split(", ");
+			final String[] employeeInfoSplited = employeeInfoRaw.split(",\\s*");
 			final int employeeId = Integer.parseInt(employeeInfoSplited[0]);
 			final int projectId  = Integer.parseInt(employeeInfoSplited[1]);
 			final String from = employeeInfoSplited[2];
 			final String to = employeeInfoSplited[3];
-			final Date workedFrom = format.parse(from);
+			final Date workedFrom = DateUtils.formatDate(from);
 			Date workedTo = null;
 			if (to.equals("NULL")) {
 				workedTo = new Date();
 			} else {
-				workedTo = format.parse(to);
+				workedTo = DateUtils.formatDate(to);
 			}
 			final Employee employee = new Employee(employeeId, workedFrom, workedTo);
 			project2employees.putIfAbsent(projectId, new ArrayList<>());

@@ -2,7 +2,6 @@ package bg.sirma.employees.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,11 +22,11 @@ public class EmployeesController {
 
 	@GetMapping("/")
 	public String home(Model model) {
-		model.addAttribute("teams", new TreeSet<>());
+		
 		return "home/home";
 	}
 
-	@PostMapping("/")
+	@PostMapping("/result")
 	public String handleUploadedFile(@RequestParam("file") MultipartFile file, Model model) throws IOException, ParseException {
 
 		Team mostWorkedTogether = this.employeesService.getMostWorkTogether(file);
