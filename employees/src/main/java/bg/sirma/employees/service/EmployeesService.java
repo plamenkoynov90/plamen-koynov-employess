@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,7 @@ import bg.sirma.employees.utils.DateUtils;
 @Service
 public class EmployeesService {
 
-	public Team getMostWorkTogether(MultipartFile file) throws IOException {
+	public Team getMostWorkTogether(MultipartFile file) throws IOException, ParseException {
 		final String fileContent = new String(file.getBytes());
 		final String[] employeesInfoRaw = fileContent.split("\r\n");
 		final Map<Integer, List<Employee>> project2employees = mapByProjectID(employeesInfoRaw);
@@ -28,7 +29,7 @@ public class EmployeesService {
 		return sortedTeams.first();
 	}
 
-	private Map<Integer, List<Employee>> mapByProjectID(final String[] employeesInfoRaw) {
+	private Map<Integer, List<Employee>> mapByProjectID(final String[] employeesInfoRaw) throws ParseException {
 		final Map<Integer, List<Employee>> project2employees = new HashMap<>();
 		for (final String employeeInfoRaw : employeesInfoRaw) {
 			final String[] employeeInfoSplited = employeeInfoRaw.split(",\\s*");
@@ -37,11 +38,17 @@ public class EmployeesService {
 			final String from = employeeInfoSplited[2];
 			final String to = employeeInfoSplited[3];
 			final Date workedFrom = DateUtils.formatDate(from);
+			if(workedFrom == null) {
+				throw new ParseException();
+			}
 			Date workedTo = null;
 			if (to.equals("NULL")) {
 				workedTo = new Date();
 			} else {
 				workedTo = DateUtils.formatDate(to);
+				if(workedTo == null) {
+					throw new ParseException();
+				}
 			}
 			final Employee employee = new Employee(employeeId, workedFrom, workedTo);
 			project2employees.putIfAbsent(projectId, new ArrayList<>());

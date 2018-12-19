@@ -4,22 +4,27 @@
 <meta charset="UTF-8">
 <title>Result Employees</title>
 </head>
-<table class="table table-bordered table-hover table-striped">
-<thead>
-    <tr>
-        <th>Employee ID #1</th>
-        <th>Employee ID #2</th>
-        <th>Project ID</th>
-        <th>Days worked</th>            
-   </tr>
- </thead>
- <tbody>     
-     <tr th:each="teamProject : ${team.projects}">         
-         <td th:text="${team.employee1ID}" ></td>
-         <td th:text="${team.employee2ID}"></td>
-         <td th:text="${teamProject.id}" ></td>
-         <td th:text="${teamProject.daysWorked}" ></td>
-      </tr>
-  </tbody>
-  </table>
+
+<div th:if="${team} != null">
+	<table class="table table-bordered table-hover table-striped">
+		<thead>
+			<tr>
+				<th>Employee ID #1</th>
+				<th>Employee ID #2</th>
+				<th>Project ID</th>
+				<th>Days worked</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="teamProject : ${team.projects}">
+				<td th:text="${team.employee1ID}"></td>
+				<td th:text="${team.employee2ID}"></td>
+				<td th:text="${teamProject.id}"></td>
+				<td th:text="${teamProject.daysWorked}"></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<h1 th:text="${error}"></h1>
+<a href="/" >Upload new file</a>
 </html>
