@@ -38,6 +38,8 @@ public class EmployeesController {
 			model.addAttribute("error", "Problem while reading the file. Please try again!" );
 		} catch (ParseException e) {
 			model.addAttribute("error", "Date format not supported!" );
+		} catch (Exception e) {
+			model.addAttribute("error", "There was some problem reading the file. Please try again!");
 		}
 		return "home/result";
 	}
