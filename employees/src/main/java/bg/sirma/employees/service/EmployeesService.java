@@ -26,10 +26,33 @@ public class EmployeesService {
 		final String[] employeesInfoRaw = fileContent.split("\r\n");
 		final Map<Integer, List<Employee>> project2employees = mapByProjectID(employeesInfoRaw);
 		final Map<String, Team> teams = mapByTeams(project2employees);
-		TreeSet<Team> sortedTeams = new TreeSet<>(teams.values());
+		final TreeSet<Team> sortedTeams = new TreeSet<>(teams.values());
 		return sortedTeams.first();
 	}
 
+	private Map<Integer, List<Employee>> mapByProjectID(final String[] employeesInfoRaw) throws ParseException {
+		final Map<Integer, List<Employee>> project2employees = new HashMap<>();
+		final DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		for (final String employeeInfoRaw : employeesInfoRaw) {
+			final String[] employeeInfoSplited = employeeInfoRaw.split(", ");
+			final int employeeId = Integer.parseInt(employeeInfoSplited[0]);
+			final int projectId  = Integer.parseInt(employeeInfoSplited[1]);
+			final String from = employeeInfoSplited[2];
+			final String to = employeeInfoSplited[3];
+			final Date workedFrom = format.parse(from);
+			Date workedTo = null;
+			if (to.equals("NULL")) {
+				workedTo = new Date();
+			} else {
+				workedTo = format.parse(to);
+			}
+			final Employee employee = new Employee(employeeId, workedFrom, workedTo);
+			project2employees.putIfAbsent(projectId, new ArrayList<>());
+			project2employees.get(projectId).add(employee);
+		}
+		return project2employees;
+	}
+	
 	private Map<String, Team> mapByTeams(final Map<Integer, List<Employee>> project2employees) {
 		Map<String, Team> teams = new HashMap<>();
 		for (Integer projectId : project2employees.keySet()) {
@@ -55,28 +78,5 @@ public class EmployeesService {
 			}
 		}
 		return teams;
-	}
-
-	private Map<Integer, List<Employee>> mapByProjectID(final String[] employeesInfoRaw) throws ParseException {
-		final Map<Integer, List<Employee>> project2employees = new HashMap<>();
-		final DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		for (final String employeeInfoRaw : employeesInfoRaw) {
-			final String[] employeeInfoSplited = employeeInfoRaw.split(", ");
-			final int employeeId = Integer.parseInt(employeeInfoSplited[0]);
-			final int projectId  = Integer.parseInt(employeeInfoSplited[1]);
-			final String from = employeeInfoSplited[2];
-			final String to = employeeInfoSplited[3];
-			final Date workedFrom = format.parse(from);
-			Date workedTo = null;
-			if (to.equals("NULL")) {
-				workedTo = new Date();
-			} else {
-				workedTo = format.parse(to);
-			}
-			final Employee employee = new Employee(employeeId, workedFrom, workedTo);
-			project2employees.putIfAbsent(projectId, new ArrayList<>());
-			project2employees.get(projectId).add(employee);
-		}
-		return project2employees;
 	}
 }
