@@ -7,7 +7,8 @@ import java.util.Date;
 
 public class DateUtils {
 
-	private static String[] formats = {"yyyy-MM-dd", "yyyy/MM/dd", "yyyy.MM.dd", "dd-MM-yyyy", "dd/MM/yyyy", "dd.MM.yyyy"};
+	private static String[] formats = {"yyyy-MM-dd", "yyyy/MM/dd", "yyyy.MM.dd", "yyyy.MM.d", 
+									   "dd-MM-yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "d.MM.yyyy"};
 	
 	public static Date formatDate(String date) {
 		for (String format : formats) {
